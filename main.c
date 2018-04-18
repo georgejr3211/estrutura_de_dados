@@ -21,27 +21,35 @@ void inserir(int valor, int posicao) {
         p->anterior = NULL;
         if (inicio == NULL) {
             inicio = p;
-        } else {
+        } else if (posicao == contador) {
             // adiciona sempre no final da lista
-            if (posicao == contador) {
+            aux = inicio;
+            while (aux->proximo != NULL) {
+                aux = aux->proximo;
+            }
+            aux->proximo = p;
+            p->anterior = aux;
+            fim = p;
+        } else if (posicao == 0) {
+            p->proximo = inicio;
+            p->anterior = NULL;
+            inicio->anterior = p;
+            inicio = p;
+        } else{
+            if((contador % 2)== 0){
                 aux = inicio;
-                while (aux->proximo != NULL) {
+                for(int i = 1; i < contador/2; i++){
                     aux = aux->proximo;
                 }
-                aux->proximo = p;
                 p->anterior = aux;
-                fim = p;
-            } else if (posicao == 0) { // adiciona sempre no inicio da lista
-                p->proximo = inicio;
-                inicio->anterior = p;
-                fim = inicio;
-                inicio = p;
-            } else { // se caso nao for nenhum dos dois, entao será adicionado no meio da lista
-
+                p->proximo = aux->proximo;
+                aux->proximo = p;
             }
         }
+
     }
 }
+
 
 void imprimir() {
     aux = inicio;
@@ -55,14 +63,18 @@ void imprimir() {
     }
     printf("total de elementos na lista: %i\n", contador);
 }
+
 // falta ajeitar a inserção no inicio da lista, porque ela nao consegue dar continuidade na lista se for inserida entre os valores normais
 // falta inserir no meio, rever lógica
+// editado a inserçao no inicio, agora falta ajeitar a insersao no meio
 int main() {
-    inserir(1, 1);
-    inserir(2, 2);
-    inserir(3, 3);
-    inserir(4, 4);
-    inserir(22, 0);
+    inserir(50, 1);
+    inserir(150, 2);
+    // valor aqui
+    inserir(25, 3);
+    inserir(120, 5);
+    inserir(122, 5);
+    inserir(123, 9);
     imprimir();
     return 0;
 }
