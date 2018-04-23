@@ -1,80 +1,110 @@
 #include <stdio.h>
 #include <malloc.h>
+#include <stdbool.h>
 
-typedef struct Lista {
+typedef struct Fila {
     int valor;
-    struct Lista *proximo;
-    struct Lista *anterior;
-} lista;
+    struct Fila *proximo;
+} fila;
 
-lista *p, *aux, *inicio = NULL, *fim = NULL;
-int contador = 0;
+fila *p, *inicio = NULL, *aux;
+int cont = 0;
 
-void inserir(int valor, int posicao) {
-    p = (lista *) malloc(sizeof(lista));
+// fila = primeiro que entra, primeiro que sai (FIFO)
+
+void inserir(int valor) {
+    p = (fila *) malloc(sizeof(fila));
     if (p == NULL) {
-        printf("Memoria cheia\n");
+        printf("memoria insuficiente\n");
     } else {
-        contador++;
         p->valor = valor;
         p->proximo = NULL;
-        p->anterior = NULL;
+
         if (inicio == NULL) {
             inicio = p;
-        } else if (posicao == contador) {
-            // adiciona sempre no final da lista
+        } else {
             aux = inicio;
             while (aux->proximo != NULL) {
                 aux = aux->proximo;
             }
             aux->proximo = p;
-            p->anterior = aux;
-            fim = p;
-        } else if (posicao == 0) {
-            p->proximo = inicio;
-            p->anterior = NULL;
-            inicio->anterior = p;
-            inicio = p;
-        } else{
-            if((contador % 2)== 0){
-                aux = inicio;
-                for(int i = 1; i < contador/2; i++){
-                    aux = aux->proximo;
-                }
-                p->anterior = aux;
-                p->proximo = aux->proximo;
-                aux->proximo = p;
-            }
         }
 
     }
 }
 
+bool isEmpty() {
+    if (inicio == NULL) {
+        return true;
+    }
+    return false;
+}
+
+void remover() {
+    if (!isEmpty()) {
+        aux = inicio;
+        aux = aux->proximo;
+        free(inicio);
+        inicio = aux;
+    }
+}
+
+void consultar(int valor) {
+    aux = inicio;
+    while (aux != NULL) {
+        if (valor == aux->valor) {
+            printf("indice: %i - valor: %i ", cont, aux->valor);
+            break;
+        }
+        aux = aux->proximo;
+        cont++;
+    }
+    printf("\n");
+}
 
 void imprimir() {
     aux = inicio;
     while (aux != NULL) {
-        printf("valor: %i\n", aux->valor);
-        printf("atual: %x\n", aux);
-        printf("anterior: %x\n", aux->anterior);
-        printf("proximo: %x\n", aux->proximo);
-        printf("-------------\n");
+        printf("%i  ", aux->valor);
         aux = aux->proximo;
     }
-    printf("total de elementos na lista: %i\n", contador);
+    printf("\n");
 }
 
-// falta ajeitar a inserção no inicio da lista, porque ela nao consegue dar continuidade na lista se for inserida entre os valores normais
-// falta inserir no meio, rever lógica
-// editado a inserçao no inicio, agora falta ajeitar a insersao no meio
-int main() {
-    inserir(50, 1);
-    inserir(150, 2);
-    // valor aqui
-    inserir(25, 3);
-    inserir(120, 5);
-    inserir(122, 5);
-    inserir(123, 9);
-    imprimir();
-    return 0;
+
+void menu(){
+    int op = 0;
+    int valor = 0;
+    do {
+        printf(" 1. inserir\n 2. remover\n 3. consultar\n 4. imprimir\n 0. sair\n");
+        scanf("%i", &op);
+        switch (op) {
+            case 1:
+                printf("informe o valor: ");
+                scanf("%i", &valor);
+                inserir(valor);
+                printf("elemento adicionado\n");
+                break;
+            case 2:
+                remover();
+                printf("elemento removido\n");
+                break;
+            case 3:
+                printf("informe o valor: ");
+                scanf("%i", &valor);
+                consultar(valor);
+                break;
+            case 4:
+                imprimir();
+                break;
+            case 0:
+                op = 0;
+                break;
+        }
+    } while (op != 0);
 }
+
+int main() {
+    menu();
+    return 0;
+};
